@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>60FPS — Economic Health & Market Intelligence</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for Interactive Stock Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts: Modern Sleek -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#0a0a0a',
+                        surface: '#121212',
+                        card: '#181818',
+                        gold: '#D4AF37',
+                        'gold-light': '#F3E5AB',
+                        'gold-dark': '#997A15',
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #0a0a0a; color: #e5e5e5; font-family: 'Plus Jakarta Sans', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
+        .gold-glow { box-shadow: 0 0 20px rgba(212, 175, 55, 0.15); }
+        .gold-border { border-color: rgba(212, 175, 55, 0.3); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-gold selection:text-black">
+
+    <!-- TOP NAVIGATION HEADER -->
+    <header class="border-b border-neutral-800 bg-obsidian/90 sticky top-0 z-50 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <!-- Logo: Intertwined 6 & 0 Gold Monogram -->
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-gold via-gold-dark to-black p-[1px] flex items-center justify-center gold-glow">
+                    <div class="w-full h-full bg-surface rounded-lg flex items-center justify-center">
+                        <span class="text-gold font-bold tracking-tighter text-lg">60</span>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-wider text-white">60<span class="text-gold">FPS</span></h1>
+                    <p class="text-[10px] tracking-widest text-neutral-400 uppercase">Macroeconomic & Asset Intelligence</p>
+                </div>
+            </div>
+
+            <!-- Persistent API Config Trigger -->
+            <div class="flex items-center space-x-4">
+                <button onclick="openSettings()" class="text-xs px-3 py-1.5 rounded border gold-border text-gold hover:bg-gold hover:text-black transition-all flex items-center space-x-1.5">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <span id="apiStatusText">API Configured</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN DASHBOARD CONTENT -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+        <!-- LEFT/MAIN SECTORS & ASSETS GRID (3 Cols) -->
+        <div class="lg:col-span-3 space-y-6">
+
+            <!-- SECTOR SELECTOR TABS -->
+            <div class="flex overflow-x-auto space-x-2 pb-2 border-b border-neutral-800">
+                <button onclick="switchTab('mag10')" class="tab-btn px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded bg-gold text-black transition-all whitespace-nowrap" data-tab="mag10">Magnificent 10</button>
+                <button onclick="switchTab('sp500')" class="tab-btn px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded bg-card text-neutral-400 hover:text-white transition-all whitespace-nowrap" data-tab="sp500">S&P 500 Index</button>
+                <button onclick="switchTab('bonds')" class="tab-btn px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded bg-card text-neutral-400 hover:text-white transition-all whitespace-nowrap" data-tab="bonds">Treasuries & Corporate</button>
+                <button onclick="switchTab('indexes')" class="tab-btn px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded bg-card text-neutral-400 hover:text-white transition-all whitespace-nowrap" data-tab="indexes">US Indexes</button>
+                <button onclick="switchTab('emerging')" class="tab-btn px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded bg-card text-neutral-400 hover:text-white transition-all whitespace-nowrap" data-tab="emerging">Emerging Markets</button>
+                <button onclick="switchTab('ai_private')" class="tab-btn px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded bg-card text-neutral-400 hover:text-white transition-all whitespace-nowrap" data-tab="ai_private">OpenAI & Anthropic</button>
+            </div>
+
+            <!-- DYNAMIC CONTENT CONTAINER -->
+            <div id="tabContentArea" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Populated dynamically by script -->
+            </div>
+
+            <!-- INTERACTIVE ASSET CHARTER & AI INSPECTOR -->
+            <div class="bg-surface rounded-xl border border-neutral-800 p-5 gold-glow">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pb-3 border-b border-neutral-800 gap-2">
+                    <div>
+                        <span id="activeAssetName" class="text-gold font-bold text-lg">NVIDIA Corporation (NVDA)</span>
+                        <p class="text-xs text-neutral-400" id="activeAssetSub">AI Hardware Infrastructure Leader | S&P 500 Heavyweight</p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <span id="activeAssetPrice" class="text-xl font-bold text-white">$128.50</span>
+                        <span id="activeAssetChange" class="text-xs px-2 py-1 rounded bg-emerald-950 text-emerald-400 font-semibold">+3.42%</span>
+                    </div>
+                </div>
+
+                <!-- Chart Canvas -->
+                <div class="h-64 w-full relative">
+                    <canvas id="assetChart"></canvas>
+                </div>
+
+                <!-- Interactive Entity Agent / Chat Interface -->
+                <div class="mt-5 pt-4 border-t border-neutral-800">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-gold">Direct Asset Intelligence Interface</span>
+                        <span class="text-[10px] text-neutral-400">Interact to query health metrics</span>
+                    </div>
+                    <div id="chatHistory" class="bg-card rounded-lg p-3 h-28 overflow-y-auto text-xs space-y-2 mb-3 border border-neutral-800">
+                        <div class="text-neutral-400">[System]: Connected to entity stream. Ask or select a quick query below regarding balance sheet health, supply chains, or macro exposure.</div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <input type="text" id="userInput" placeholder="Ask NVDA or sector about guidance, margins, or debt..." class="flex-1 bg-card border border-neutral-700 rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-gold">
+                        <button onclick="sendUserQuery()" class="px-4 py-2 bg-gold text-black font-bold text-xs rounded hover:bg-gold-light transition-all">Query</button>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        <button onclick="quickPrompt('What are the latest margin trends?')" class="text-[10px] bg-card border border-neutral-800 px-2 py-1 rounded text-neutral-300 hover:border-gold transition-all">Margins & Guidance</button>
+                        <button onclick="quickPrompt('How does macro rate exposure affect this asset?')" class="text-[10px] bg-card border border-neutral-800 px-2 py-1 rounded text-neutral-300 hover:border-gold transition-all">Rate Sensitivity</button>
+                        <button onclick="quickPrompt('Summarize recent news sentiment.')" class="text-[10px] bg-card border border-neutral-800 px-2 py-1 rounded text-neutral-300 hover:border-gold transition-all">News Sentiment</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT SIDEBAR: MEDIA FEED & YOUTUBE PLUGIN -->
+        <div class="space-y-6">
+
+            <!-- YOUTUBE PLUGIN (60FPS STREAM) -->
+            <div class="bg-surface rounded-xl border border-neutral-800 p-4 gold-glow">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-gold flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
+                        <span>60FPS Media Stream</span>
+                    </h3>
+                    <span class="text-[10px] text-neutral-400">Live Audio/Video</span>
+                </div>
+                <!-- YouTube Embedded Plugin -->
+                <div class="aspect-video w-full rounded-lg overflow-hidden bg-black border border-neutral-800">
+                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/y1-u9eqCnaE?autoplay=0&mute=1&controls=1" title="60FPS Macro Stream" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <p class="text-[11px] text-neutral-300 mt-2 font-medium">Weekly Economic Breakdown & Capital Allocation</p>
+            </div>
+
+            <!-- SCROLLING FEED & BREAKING NEWS -->
+            <div class="bg-surface rounded-xl border border-neutral-800 p-4">
+                <div class="flex items-center justify-between mb-3 pb-2 border-b border-neutral-800">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-gold">Real-Time News Wire</h3>
+                    <span class="text-[10px] text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded">Synced</span>
+                </div>
+                <div class="space-y-3 max-h-[380px] overflow-y-auto pr-1" id="newsTicker">
+                    <!-- Dynamic News Items -->
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- SETTINGS MODAL (Persistent API Storage) -->
+    <div id="settingsModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-surface border gold-border rounded-xl max-w-md w-full p-6 space-y-4">
+            <div class="flex justify-between items-center pb-2 border-b border-neutral-800">
+                <h3 class="text-sm font-bold text-gold uppercase tracking-wider">Permanent Data Preferences</h3>
+                <button onclick="closeSettings()" class="text-neutral-400 hover:text-white">&times;</button>
+            </div>
+            <p class="text-xs text-neutral-400">Your configuration is safely saved locally in your browser. You will never need to re-enter your credentials on future visits.</p>
+            
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-[11px] font-semibold text-neutral-300 uppercase mb-1">Market Data Provider</label>
+                    <select id="prefProvider" class="w-full bg-card border border-neutral-700 rounded p-2 text-xs text-white">
+                        <option value="alphavantage">Alpha Vantage (Default Proxy)</option>
+                        <option value="polygon">Polygon.io REST</option>
+                        <option value="bloomberg">Bloomberg Terminal API Bridge</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-neutral-300 uppercase mb-1">API Key (Cached Securely)</label>
+                    <input type="password" id="prefApiKey" placeholder="Enter API Key (Optional for demo mode)..." class="w-full bg-card border border-neutral-700 rounded p-2 text-xs text-white">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-neutral-300 uppercase mb-1">Data Refresh Interval</label>
+                    <select id="prefInterval" class="w-full bg-card border border-neutral-700 rounded p-2 text-xs text-white">
+                        <option value="realtime">Real-Time WebSocket</option>
+                        <option value="1m">Every 1 Minute</option>
+                        <option value="5m">Every 5 Minutes</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-2 pt-3 border-t border-neutral-800">
+                <button onclick="closeSettings()" class="px-4 py-2 bg-card text-neutral-300 text-xs rounded hover:bg-neutral-800">Cancel</button>
+                <button onclick="saveSettings()" class="px-4 py-2 bg-gold text-black font-bold text-xs rounded hover:bg-gold-light">Save Configuration</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- APPLICATION LOGIC SCRIPT -->
+    <script>
+        const db = {
+            mag10: [
+                { symbol: 'NVDA', name: 'NVIDIA Corporation', price: '$128.50', change: '+3.42%', sub: 'AI Hardware / S&P Leader', chart: [110, 115, 112, 120, 125, 128.5], data: { margins: 'Gross margin at 75.2% driven by Hopper/Blackwell compute demand.', debt: 'Minimal long-term debt relative to operating cash flow.' } },
+                { symbol: 'AAPL', name: 'Apple Inc.', price: '$224.20', change: '+0.85%', sub: 'Consumer Electronics Ecosystem', chart: [215, 218, 217, 220, 222, 224.2], data: { margins: 'Services revenue hitting record highs at 42% gross margin.', debt: 'Strong AAA balance sheet with robust share buyback program.' } },
+                { symbol: 'MSFT', name: 'Microsoft Corporation', price: '$448.90', change: '+1.12%', sub: 'Cloud & Enterprise AI', chart: [430, 435, 440, 438, 445, 448.9], data: { margins: 'Azure growth steady at 29% YoY with expanding AI workloads.', debt: 'Conservative leverage structure supporting immense R&D.' } },
+                { symbol: 'GOOGL', name: 'Alphabet Inc.', price: '$179.40', change: '-0.45%', sub: 'Search & Cloud Infrastructure', chart: [175, 178, 182, 180, 177, 179.4], data: { margins: 'Ad revenue resilient; Google Cloud operating income scaling rapidly.', debt: 'Exceptional cash reserves exceeding $100B.' } },
+                { symbol: 'AMZN', name: 'Amazon.com Inc.', price: '$186.30', change: '+1.65%', sub: 'E-Commerce & AWS', chart: [180, 182, 181, 184, 185, 186.3], data: { margins: 'AWS re-acceleration paired with retail logistics optimization.', debt: 'Moderate capital expenditure cycle for data center buildouts.' } },
+                { symbol: 'META', name: 'Meta Platforms', price: '$512.10', change: '+2.10%', sub: 'Social Media & Open AI', chart: [490, 498, 505, 502, 510, 512.1], data: { margins: 'Ad impressions up 11% YoY; Reality Labs losses stable.', debt: 'Pristine balance sheet with zero net long-term structural stress.' } },
+                { symbol: 'TSLA', name: 'Tesla Inc.', price: '$222.50', change: '-1.80%', sub: 'EVs, Energy & Autonomy', chart: [230, 228, 225, 220, 224, 222.5], data: { margins: 'Energy storage deployments surging; automotive margins stabilizing.', debt: 'Debt-free core manufacturing operations.' } },
+                { symbol: 'AMD', name: 'Advanced Micro Devices', price: '$154.80', change: '+1.40%', sub: 'Semiconductors', chart: [148, 150, 152, 151, 153, 154.8], data: { margins: 'MI300x accelerator chips gaining enterprise market share.', debt: 'Low debt profile with balanced cash conversion.' } },
+                { symbol: 'AVGO', name: 'Broadcom Inc.', price: '$165.20', change: '+0.90%', sub: 'Custom Silicon & Networking', chart: [158, 160, 162, 161, 164, 165.2], data: { margins: 'VMware integration driving software operating margins higher.', debt: 'Managed debt load backed by predictable recurring cash flows.' } },
+                { symbol: 'PLTR', name: 'Palantir Technologies', price: '$31.40', change: '+4.50%', sub: 'AI Operating Systems', chart: [28, 29, 29.5, 30, 30.8, 31.4], data: { margins: 'US Commercial customer count up 83% YoY with 81% gross margins.', debt: 'Zero debt, highly profitable enterprise growth model.' } }
+            ],
+            sp500: [
+                { symbol: 'SPX', name: 'S&P 500 Index', price: '5,630.20', change: '+0.82%', sub: 'Broad U.S. Large-Cap Benchmark', chart: [5550, 5580, 5570, 5600, 5615, 5630.2], data: { margins: 'Aggregate index operating margin near 12.8%.', debt: 'Corporate interest coverage ratios remain healthy near 4.5x.' } },
+                { symbol: 'SPY', name: 'SPDR S&P 500 ETF Trust', price: '$562.40', change: '+0.78%', sub: 'Primary Liquid ETF Tracker', chart: [554, 557, 556, 559, 561, 562.4], data: { margins: 'Liquidity depth unsurpassed across global capital markets.', debt: 'Direct proxy for top 500 U.S. corporate balance sheets.' } }
+            ],
+            bonds: [
+                { symbol: 'US10Y', name: 'U.S. 10-Year Treasury Yield', price: '4.25%', change: '-0.04 bps', sub: 'Benchmark Risk-Free Rate', chart: [4.35, 4.32, 4.30, 4.28, 4.26, 4.25], data: { margins: 'Yield curve steepening trend undergoing stabilization.', debt: 'U.S. sovereign debt issuance absorption monitored closely.' } },
+                { symbol: 'US2Y', name: 'U.S. 2-Year Treasury Yield', price: '3.92%', change: '-0.06 bps', sub: 'Fed Rate Expectation Gauge', chart: [4.05, 4.02, 3.98, 3.95, 3.94, 3.92], data: { margins: 'Pricing in anticipated Fed rate adjustment trajectory.', debt: 'Short-end duration demand robust among institutional funds.' } },
+                { symbol: 'HYG', name: 'iBoxx High Yield Corporate Bond', price: '$78.20', change: '+0.35%', sub: 'US Corporate Credit Health', chart: [77.5, 77.8, 77.6, 77.9, 78.0, 78.2], data: { margins: 'Credit spreads tight at 320 bps over treasuries; default risk low.', debt: 'Refinancing wall largely managed through 2026.' } }
+            ],
+            indexes: [
+                { symbol: 'COMP', name: 'NASDAQ Composite', price: '17,850.10', change: '+1.15%', sub: 'Tech-Heavy US Index', chart: [17400, 17550, 17500, 17700, 17800, 17850], data: { margins: 'Tech sector earnings growth outpacing traditional cyclicals.', debt: 'Balanced institutional participation.' } },
+                { symbol: 'DJIA', name: 'Dow Jones Industrial Average', price: '41,120.50', change: '+0.40%', sub: 'Blue-Chip Industrials', chart: [40800, 40950, 40900, 41000, 41080, 41120], data: { margins: 'Defensive cash flows with stable dividend payout ratios.', debt: 'Conservative balance sheet weightings.' } }
+            ],
+            emerging: [
+                { symbol: 'EEM', name: 'MSCI Emerging Markets ETF', price: '$42.80', change: '+0.25%', sub: 'Global Emerging Economies', chart: [42.1, 42.3, 42.2, 42.5, 42.6, 42.8], data: { margins: 'Export demand resilient across Asian electronics corridors.', debt: 'Foreign exchange reserve buffers stable.' } },
+                { symbol: 'FXI', name: 'iShares China Large-Cap ETF', price: '$26.50', change: '-0.60%', sub: 'Chinese Equities Benchmark', chart: [27.0, 26.8, 26.9, 26.6, 26.7, 26.5], data: { margins: 'Stimulus policy impacts being digested across industrial sectors.', debt: 'Sovereign and corporate restructuring underway.' } }
+            ],
+            ai_private: [
+                { symbol: 'OPENAI', name: 'OpenAI (Private Valuation)', price: '$150B Val.', change: 'Private', sub: 'Foundational AI Research & GPT Infrastructure', chart: [100, 115, 125, 135, 142, 150], data: { margins: 'Annualized revenue run-rate scaling past multi-billions; heavy compute capex.', debt: 'Venture & strategic partner backed capital structure.' } },
+                { symbol: 'ANTH', name: 'Anthropic (Private Valuation)', price: '$40B Val.', change: 'Private', sub: 'Claude AI Systems & Safety Research', chart: [20, 25, 30, 35, 38, 40], data: { margins: 'Enterprise API adoption accelerating across financial and legal sectors.', debt: 'Backed by major cloud hyperscaler infrastructure commitments.' } }
+            ]
+        };
+
+        const newsItems = [
+            { time: '10 mins ago', tag: 'Treasuries', title: '10-Year Treasury Yield Stabilizes at 4.25% Amid Balanced Inflation Data', impact: 'Neutral' },
+            { time: '25 mins ago', tag: 'Magnificent 10', title: 'NVIDIA Announces Expanded Blackwell Chip Deliveries for Tier-1 Cloud Providers', impact: 'Bullish' },
+            { time: '1 hour ago', tag: 'OpenAI', title: 'Enterprise Agent Adoption Surges 200% Across Fortune 500 Deployments', impact: 'Bullish' },
+            { time: '2 hours ago', tag: 'Corporate Bonds', title: 'Investment Grade Issuance Sees Heavy Institutional Oversubscription', impact: 'Bullish' },
+            { time: '3 hours ago', tag: 'Emerging Markets', title: 'Asian Semiconductor Exports Post Consecutive Monthly Expansion', impact: 'Bullish' }
+        ];
+
+        let currentTab = 'mag10';
+        let currentAsset = db.mag10[0];
+        let chartInstance = null;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadStoredPreferences();
+            renderTabContent(currentTab);
+            renderNewsTicker();
+            initChart(currentAsset);
+        });
+
+        function switchTab(tabKey) {
+            currentTab = tabKey;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                if(btn.dataset.tab === tabKey) {
+                    btn.className = 'tab-btn px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded bg-gold text-black transition-all whitespace-nowrap';
+                } else {
+                    btn.className = 'tab-btn px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded bg-card text-neutral-400 hover:text-white transition-all whitespace-nowrap';
+                }
+            });
+            renderTabContent(tabKey);
+        }
+
+        function renderTabContent(tabKey) {
+            const container = document.getElementById('tabContentArea');
+            container.innerHTML = '';
+            db[tabKey].forEach(item => {
+                const isSelected = currentAsset.symbol === item.symbol;
+                const card = document.createElement('div');
+                card.className = `bg-surface rounded-xl p-4 border transition-all cursor-pointer hover:border-gold ${isSelected ? 'border-gold gold-glow bg-[#1c1c1c]' : 'border-neutral-800'}`;
+                card.onclick = () => selectAsset(item);
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <span class="text-xs font-bold text-gold">${item.symbol}</span>
+                            <h4 class="text-sm font-semibold text-white">${item.name}</h4>
+                        </div>
+                        <span class="text-xs px-2 py-0.5 rounded font-medium ${item.change.startsWith('+') ? 'bg-emerald-950 text-emerald-400' : item.change.startsWith('-') ? 'bg-red-950 text-red-400' : 'bg-neutral-800 text-neutral-300'}">${item.change}</span>
+                    </div>
+                    <div class="flex justify-between items-end mt-4">
+                        <span class="text-lg font-bold text-white">${item.price}</span>
+                        <span class="text-[11px] text-neutral-400">${item.sub}</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function selectAsset(item) {
+            currentAsset = item;
+            document.getElementById('activeAssetName').innerText = `${item.name} (${item.symbol})`;
+            document.getElementById('activeAssetSub').innerText = item.sub;
+            document.getElementById('activeAssetPrice').innerText = item.price;
+            
+            const changeEl = document.getElementById('activeAssetChange');
+            changeEl.innerText = item.change;
+            changeEl.className = `text-xs px-2 py-1 rounded font-semibold ${item.change.startsWith('+') ? 'bg-emerald-950 text-emerald-400' : 'bg-red-950 text-red-400'}`;
+
+            renderTabContent(currentTab);
+            updateChart(item);
+        }
+
+        function initChart(item) {
+            const ctx = document.getElementById('assetChart').getContext('2d');
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Period 1', 'Period 2', 'Period 3', 'Period 4', 'Period 5', 'Live'],
+                    datasets: [{
+                        label: item.symbol + ' Trend',
+                        data: item.chart,
+                        borderColor: '#D4AF37',
+                        backgroundColor: 'rgba(212, 175, 55, 0.05)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#D4AF37'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#737373', font: { size: 10 } } },
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#737373', font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        function updateChart(item) {
+            if(chartInstance) {
+                chartInstance.data.datasets[0].label = item.symbol + ' Trend';
+                chartInstance.data.datasets[0].data = item.chart;
+                chartInstance.update();
+            }
+        }
+
+        function renderNewsTicker() {
+            const ticker = document.getElementById('newsTicker');
+            ticker.innerHTML = '';
+            newsItems.forEach(n => {
+                const div = document.createElement('div');
+                div.className = 'p-2.5 rounded bg-card border border-neutral-800 hover:border-neutral-700 transition-all';
+                div.innerHTML = `
+                    <div class="flex justify-between items-center text-[10px] text-neutral-400 mb-1">
+                        <span class="text-gold font-semibold">${n.tag}</span>
+                        <span>${n.time}</span>
+                    </div>
+                    <p class="text-xs font-medium text-neutral-200 leading-snug">${n.title}</p>
+                `;
+                ticker.appendChild(div);
+            });
+        }
+
+        function sendUserQuery() {
+            const input = document.getElementById('userInput');
+            const query = input.value.trim();
+            if(!query) return;
+
+            appendChat('User', query, 'text-gold');
+            input.value = '';
+
+            setTimeout(() => {
+                let response = `Analyzing ${currentAsset.name} data stream: `;
+                if(query.toLowerCase().includes('margin') || query.toLowerCase().includes('guidance')) {
+                    response += currentAsset.data.margins || 'Operating margins remain resilient within current macroeconomic parameters.';
+                } else if(query.toLowerCase().includes('rate') || query.toLowerCase().includes('debt')) {
+                    response += currentAsset.data.debt || 'Balance sheet structured conservatively against rate volatility.';
+                } else {
+                    response += `Recent telemetry indicates stable institutional demand with solid fundamental health metrics for ${currentAsset.symbol}.`;
+                }
+                appendChat(currentAsset.symbol, response, 'text-emerald-400');
+            }, 600);
+        }
+
+        function quickPrompt(text) {
+            document.getElementById('userInput').value = text;
+            sendUserQuery();
+        }
+
+        function appendChat(sender, text, colorClass) {
+            const history = document.getElementById('chatHistory');
+            const msg = document.createElement('div');
+            msg.innerHTML = `<span class="font-bold ${colorClass}">[${sender}]:</span> <span class="text-neutral-300">${text}</span>`;
+            history.appendChild(msg);
+            history.scrollTop = history.scrollHeight;
+        }
+
+        function openSettings() {
+            document.getElementById('settingsModal').classList.remove('hidden');
+            const savedKey = localStorage.getItem('fps_api_key');
+            const savedProv = localStorage.getItem('fps_provider');
+            if(savedKey) document.getElementById('prefApiKey').value = savedKey;
+            if(savedProv) document.getElementById('prefProvider').value = savedProv;
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.add('hidden');
+        }
+
+        function saveSettings() {
+            const key = document.getElementById('prefApiKey').value;
+            const prov = document.getElementById('prefProvider').value;
+            localStorage.setItem('fps_api_key', key);
+            localStorage.setItem('fps_provider', prov);
+            
+            document.getElementById('apiStatusText').innerText = key ? 'API Key Active' : 'Demo Mode Active';
+            closeSettings();
+        }
+
+        function loadStoredPreferences() {
+            const savedKey = localStorage.getItem('fps_api_key');
+            if(savedKey) {
+                document.getElementById('apiStatusText').innerText = 'API Key Active';
+            }
+        }
+    </script>
+</body>
+</html>
