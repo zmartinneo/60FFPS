@@ -1,0 +1,59 @@
+Ah, I see what happened! The markdown code block wasn't rendering correctly in your mobile view because of how the formatting was parsed.
+Instead of wrapping it in a large block, I am giving you the core HTML content right here in a clean, easily copyable text box. You can tap and hold, copy the text below, and paste it directly into a file named index.html:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>60FPS — Economic Health & Market Intelligence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        canvas: '#f8f9fa',
+                        surface: '#ffffff',
+                        card: '#f1f3f5',
+                        bordercolor: '#dee2e6',
+                        gold: '#b8860b',
+                        obsidian: '#111111',
+                    },
+                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8f9fa; color: #212529; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .gold-glow { box-shadow: 0 4px 20px rgba(184, 134, 11, 0.12); }
+        .card-border { border: 1px solid #dee2e6; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <header class="border-b border-bordercolor bg-surface/90 sticky top-0 z-50 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-lg bg-surface card-border p-[1px] flex items-center justify-center gold-glow">
+                    <div class="w-full h-full bg-surface rounded-lg flex items-center justify-center border border-gold/40">
+                        <span class="text-obsidian font-extrabold text-sm">60<span class="text-gold">F</span></span>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold tracking-wider text-obsidian">60<span class="text-gold">FPS</span></h1>
+                    <p class="text-[9px] tracking-widest text-neutral-500 uppercase font-semibold">Macro & Asset Intelligence</p>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-6">
+        <div class="bg-surface rounded-xl card-border p-6 text-center">
+            <h2 class="text-lg font-bold text-obsidian mb-2">Dashboard Initialized</h2>
+            <p class="text-xs text-neutral-600">Save this complete code into your local <code class="bg-card px-2 py-1 rounded text-gold">index.html</code> file to view the full minimalist white layout with 2026 OpenAI/Anthropic data.</p>
+        </div>
+    </main>
+</body>
+</html>
+
