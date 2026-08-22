@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>60FPS — Macro & Asset Intelligence</title>
+
+    <meta property="og:title" content="60FPS — Macro & Asset Intelligence">
+    <meta property="og:description" content="High-performance financial intelligence, macro analysis, and asset tracking.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop">
+    <meta property="og:type" content="website">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { brand: {
+                gold: '#b89728', dark: '#111113', card: '#ffffff', border: '#e4e4e7', bg: '#f8f8fc'
+            } } } }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="data/data.js"></script>
+    <style>
+        @keyframes marquee { 0% { transform: translateX(0%); } 100% { transform: translateX(-50%); } }
+        .animate-marquee { display: flex; width: 200%; animation: marquee 40s linear infinite; }
+        .animate-marquee:hover { animation-play-state: paused; }
+        @media (prefers-reduced-motion: reduce) { .animate-marquee { animation: none; width: auto; overflow-x: auto; } }
+        .nav-btn { padding: .5rem .85rem; font-size: .7rem; font-weight: 700; border-radius: .5rem; transition: all .15s; color: #52525b; white-space: nowrap; }
+        .nav-btn:hover { color: #111113; }
+        .nav-btn.active { background: #111113; color: #fff; }
+        .nav-btn:focus-visible { outline: 2px solid #b89728; outline-offset: 2px; }
+        .page { display: none; }
+        .page.active { display: block; }
+    </style>
+</head>
+<body class="bg-brand-bg text-gray-900 font-sans antialiased selection:bg-brand-gold selection:text-white min-h-screen flex flex-col justify-between">
+
+<div>
+    <!-- Ticker tape (populated from DATA by JS) -->
+    <div class="bg-brand-dark text-gray-300 border-b border-gray-800 overflow-hidden whitespace-nowrap py-2 text-xs">
+        <div id="ticker" class="animate-marquee flex space-x-8"></div>
+    </div>
+
+    <header class="border-b border-brand-border bg-white/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+            <a href="#dashboard" class="flex items-center space-x-3">
+                <div class="relative w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-dark via-gray-900 to-brand-gold p-[1px] flex items-center justify-center shadow-md">
+                    <div class="w-full h-full bg-white rounded-xl flex items-center justify-center overflow-hidden relative">
+                        <span class="font-black text-brand-dark text-sm tracking-tighter">60F</span>
+                        <div class="absolute bottom-0 right-0 w-2 h-2 bg-brand-gold rounded-full animate-pulse"></div>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="text-lg font-black tracking-tight leading-tight"><span class="text-brand-gold">60</span>FPS</h1>
+                    <p class="text-[10px] tracking-widest text-gray-500 uppercase font-semibold">Macro & Asset Intelligence</p>
+                </div>
+            </a>
+
+            <nav class="flex items-center bg-gray-100 p-1 rounded-xl border border-brand-border overflow-x-auto max-w-full" aria-label="Sections">
+                <a href="#dashboard"  class="nav-btn" data-nav="dashboard">Dashboard</a>
+                <a href="#mag10"      class="nav-btn" data-nav="mag10">Mag 10</a>
+                <a href="#bonds"      class="nav-btn" data-nav="bonds">Bonds</a>
+                <a href="#em"         class="nav-btn" data-nav="em">Emerging Mkts</a>
+                <a href="#indexes"    class="nav-btn" data-nav="indexes">Indexes</a>
+                <a href="#llm"        class="nav-btn" data-nav="llm">LLM Cos.</a>
+                <a href="#purpose"    class="nav-btn" data-nav="purpose">Purpose</a>
+            </nav>
+
+            <div id="data-status" class="text-[10px] font-mono text-gray-500 border border-brand-border rounded-lg px-2.5 py-1.5" aria-live="polite">Market snapshot</div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-6 w-full">
+
+        <!-- DASHBOARD -->
+        <section id="page-dashboard" class="page space-y-8">
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="bg-white border border-brand-border p-5 rounded-2xl">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-sm font-bold">Magnificent 10 — market snapshot</h3>
+                        <a href="#mag10" class="text-xs font-bold text-brand-gold hover:underline">Full page →</a>
+                    </div>
+                    <div id="dash-mag10" class="grid grid-cols-2 sm:grid-cols-5 gap-2"></div>
+                </div>
+                <div class="bg-white border border-brand-border p-5 rounded-2xl">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-sm font-bold">Benchmark indexes</h3>
+                        <a href="#indexes" class="text-xs font-bold text-brand-gold hover:underline">Full page →</a>
+                    </div>
+                    <div id="dash-indexes" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
+                </div>
+            </div>
+
+            <div class="bg-white border border-brand-border p-5 rounded-2xl">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="text-sm font-bold">NVDA: quarterly price tracker</h3>
+                        <p class="text-xs text-gray-500">Quarterly reference series</p>
+                    </div>
+                    <span class="text-xs bg-amber-50 text-brand-gold border border-brand-gold/30 px-2.5 py-1 rounded-md font-mono font-semibold">Reference series</span>
+                </div>
+                <div class="h-64 relative"><canvas id="dashboardChart"></canvas></div>
+            </div>
+
+            <div class="bg-white border border-brand-border p-5 rounded-2xl">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-brand-gold mb-3">Latest from Prof G Markets</h4>
+                <div class="aspect-video w-full rounded-xl overflow-hidden bg-gray-900 border border-brand-border">
+                    <iframe class="w-full h-full" id="yt-dash" loading="lazy"
+                        src="https://www.youtube-nocookie.com/embed/videoseries?list=UUp4CBeq4nzeg9smAvdjPrig"
+                        title="Prof G Markets — latest episodes"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <p class="text-[11px] text-gray-500 mt-2">Feed is the channel's uploads playlist, so it always opens on the newest episode.
+                    <a class="text-brand-gold hover:underline" href="https://www.youtube.com/@ProfGMarkets" target="_blank" rel="noopener">Open the channel ↗</a></p>
+            </div>
+        </section>
+
+        <!-- MAG 10 -->
+        <section id="page-mag10" class="page space-y-6">
+            <div class="flex items-end justify-between flex-wrap gap-2">
+                <div><h2 class="text-2xl font-black">Magnificent 10</h2><p class="text-xs text-gray-500">Tap a card for profile and 5-session trend</p></div>
+                <span class="text-xs text-gray-500 font-mono public-as-of">Market snapshot</span>
+            </div>
+            <div id="grid-mag10" class="grid grid-cols-2 md:grid-cols-5 gap-3"></div>
+            <div class="bg-white border border-brand-border p-5 rounded-2xl">
+                <h3 class="text-sm font-bold mb-3">Day change across the group</h3>
+                <div class="h-56 relative"><canvas id="mag10Chart"></canvas></div>
+            </div>
+            <div id="news-mag10" class="news-block"></div>
+        </section>
+
+        <!-- BONDS -->
+        <section id="page-bonds" class="page space-y-6">
+            <div class="flex items-end justify-between flex-wrap gap-2">
+                <div><h2 class="text-2xl font-black">Bond market</h2><p class="text-xs text-gray-500">Treasury curve, aggregate, credit, and municipal benchmarks</p></div>
+                <span class="text-xs text-gray-500 font-mono public-as-of">Market snapshot</span>
+            </div>
+            <div class="bg-white border border-brand-border p-5 rounded-2xl">
+                <h3 class="text-sm font-bold mb-3">US Treasury yield curve</h3>
+                <div class="h-56 relative"><canvas id="curveChart"></canvas></div>
+            </div>
+            <div id="grid-bonds" class="grid grid-cols-2 md:grid-cols-5 gap-3"></div>
+            <div id="news-bonds" class="news-block"></div>
+        </section>
+
+        <!-- EMERGING MARKETS -->
+        <section id="page-em" class="page space-y-6">
+            <div class="flex items-end justify-between flex-wrap gap-2">
+                <div><h2 class="text-2xl font-black">Emerging markets</h2><p class="text-xs text-gray-500">Country and regional ETFs as liquid proxies</p></div>
+                <span class="text-xs text-gray-500 font-mono public-as-of">Market snapshot</span>
+            </div>
+            <div id="grid-em" class="grid grid-cols-2 md:grid-cols-5 gap-3"></div>
+            <div class="bg-white border border-brand-border p-5 rounded-2xl">
+                <h3 class="text-sm font-bold mb-3">Day change by market</h3>
+                <div class="h-56 relative"><canvas id="emChart"></canvas></div>
+            </div>
+            <div id="news-em" class="news-block"></div>
+        </section>
+
+        <!-- INDEXES -->
+        <section id="page-indexes" class="page space-y-6">
+            <div class="flex items-end justify-between flex-wrap gap-2">
+                <div><h2 class="text-2xl font-black">Indexes</h2><p class="text-xs text-gray-500">US and global benchmarks (ETF proxies where noted)</p></div>
+                <span class="text-xs text-gray-500 font-mono public-as-of">Market snapshot</span>
+            </div>
+            <div id="grid-indexes" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div>
+            <div id="news-indexes" class="news-block"></div>
+        </section>
+
+        <!-- LLM COMPANIES -->
+        <section id="page-llm" class="page space-y-6">
+            <div class="flex items-end justify-between flex-wrap gap-2">
+                <div><h2 class="text-2xl font-black">LLM companies — private market</h2><p class="text-xs text-gray-500">Last-reported valuations from press coverage through roughly late 2025. Each record has an as-of date and newsroom link; private-market entries are editorial references, not a live pricing feed.</p></div>
+                <span class="text-xs text-gray-500 font-mono">Edit in <code>data/data.js</code></span>
+            </div>
+            <div class="bg-white border border-brand-border rounded-2xl overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="text-[10px] uppercase tracking-wider text-gray-500 bg-gray-50 border-b border-brand-border">
+                        <tr><th class="text-left p-3">Company</th><th class="text-right p-3">Valuation</th><th class="text-left p-3">Latest round</th><th class="text-left p-3">Lead investors</th><th class="text-left p-3">As reported</th><th class="p-3">Source</th></tr>
+                    </thead>
+                    <tbody id="llm-table"></tbody>
+                </table>
+            </div>
+            <div class="bg-white border border-brand-border p-5 rounded-2xl">
+                <h3 class="text-sm font-bold mb-3">Valuation ($B, last reported)</h3>
+                <div class="h-64 relative"><canvas id="llmChart"></canvas></div>
+            </div>
+            <div id="news-llm" class="news-block"></div>
+        </section>
+
+        <!-- PURPOSE -->
+        <section id="page-purpose" class="page space-y-6">
+            <div class="bg-white border border-brand-border p-8 rounded-2xl space-y-6">
+                <div>
+                    <span class="text-xs font-mono text-brand-gold uppercase tracking-widest font-bold">Economic Ethos</span>
+                    <h2 class="text-2xl font-black mt-1">Our Purpose</h2>
+                </div>
+                <div class="space-y-4 text-sm text-gray-700 leading-relaxed border-t border-brand-border pt-6">
+                    <p>Markets are constantly moving, but much of the financial commentary around them gets caught up in short term noise. <strong class="text-gray-900">60FPS</strong> was created to focus on what actually drives long term value: capital flow, structural shifts in technology, and fundamental business execution.</p>
+                    <p>The name reflects our goal. Just as a steady frame rate gives you a clear and fluid picture of moving video, our platform aims to provide a clear and organized view of economic performance. We break down complex assets into direct, readable insights so you can track major market movements without getting bogged down in unnecessary market chatter.</p>
+                    <p>Whether monitoring foundational technology leaders, analyzing shifting bond yields, or tracking key corporate trends, our focus remains straightforward: give investors reliable data and clear context so they can make confident, informed decisions.</p>
+                </div>
+                <div class="pt-6 border-t border-brand-border">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-brand-gold mb-3">Featured Market Analysis (Prof G Markets)</h4>
+                    <div class="aspect-video w-full rounded-xl overflow-hidden bg-gray-900 border border-brand-border">
+                        <iframe class="w-full h-full" loading="lazy"
+                            src="https://www.youtube-nocookie.com/embed/videoseries?list=UUp4CBeq4nzeg9smAvdjPrig"
+                            title="Prof G Markets — latest episodes"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ASSET DETAIL -->
+        <section id="page-detail" class="page space-y-6">
+            <button id="detail-back" class="inline-flex items-center space-x-2 text-xs font-bold text-brand-gold hover:underline">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                <span>Back</span>
+            </button>
+            <div class="bg-white border border-brand-border p-6 rounded-2xl space-y-4">
+                <div class="flex flex-wrap justify-between items-start gap-4">
+                    <div>
+                        <span id="detail-symbol" class="text-xs font-mono text-brand-gold uppercase tracking-widest font-bold"></span>
+                        <h2 id="detail-name" class="text-2xl font-black"></h2>
+                    </div>
+                    <div class="text-right">
+                        <span id="detail-price" class="text-xl font-bold"></span>
+                        <p id="detail-change" class="text-xs font-semibold"></p>
+                    </div>
+                </div>
+                <div class="border-t border-brand-border pt-4">
+                    <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Profile</h4>
+                    <p id="detail-bio" class="text-sm text-gray-700 leading-relaxed"></p>
+                </div>
+                <div class="pt-4">
+                    <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Past 5 sessions</h4>
+                    <div class="h-48 relative"><canvas id="detailChart"></canvas></div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<footer class="border-t border-brand-border py-4 text-center text-xs text-gray-500 bg-white">
+    &copy; 2026 60FPS Intelligence. Market figures are displayed as dated snapshots; not investment advice.
+</footer>
+
+<script>
+/* =========================================================================
+   DATA
+   Public-market snapshots, editable LLM-company records, and curated reading
+   links live in data/data.js. No market-data key is sent to the browser.
+   ========================================================================= */
+/* ========================================================================= RENDER */
+const $ = id => document.getElementById(id);
+const fmtChg = c => (c >= 0 ? '+' : '') + c.toFixed(2) + (Math.abs(c) < 0.2 && c !== 0 ? '' : '') ;
+const chgClass = c => c >= 0 ? 'text-emerald-600' : 'text-rose-600';
+const fmtPrice = a => a.isYield ? a.yield.toFixed(2) + '%' : '$' + a.price.toLocaleString(undefined,{maximumFractionDigits:2});
+
+function card(a, group) {
+    const chgTxt = a.isYield ? (a.chg>=0?'+':'') + a.chg.toFixed(2) + ' pp' : fmtChg(a.chg) + '%';
+    return `<button class="text-left bg-white border border-brand-border p-3.5 rounded-xl cursor-pointer hover:border-brand-gold transition group w-full" data-detail="${group}:${a.sym}">
+        <div class="flex justify-between items-start"><span class="text-xs font-mono text-gray-500">${a.sym}</span><span class="text-xs font-semibold ${chgClass(a.chg)}">${chgTxt}</span></div>
+        <h4 class="text-xs font-bold mt-1 group-hover:text-brand-gold">${a.name}</h4>
+        <p class="text-[10px] text-gray-500 mt-1 line-clamp-1">${a.sub}</p>
+        <p class="text-[11px] font-mono mt-1">${fmtPrice(a)}</p>
+    </button>`;
+}
+function miniCard(a, group) {
+    return `<button class="text-left border border-brand-border p-2 rounded-lg hover:border-brand-gold transition" data-detail="${group}:${a.sym}">
+        <div class="text-[10px] font-mono text-gray-500">${a.sym}</div>
+        <div class="text-xs font-semibold ${chgClass(a.chg)}">${fmtChg(a.chg)}%</div></button>`;
+}
+function newsBlock(key) {
+    return `<div class="bg-white border border-brand-border p-5 rounded-2xl">
+        <h3 class="text-sm font-bold mb-1">Curated reading & sources</h3>
+        <p class="text-[11px] text-gray-500 mb-3">Editorial links selected for this page; they are not a live news feed.</p>
+        <ul class="text-sm space-y-1">${DATA.news[key].map(([t,u])=>`<li><a class="text-brand-gold hover:underline" href="${u}" target="_blank" rel="noopener">${t} ↗</a></li>`).join('')}</ul></div>`;
+}
+
+function renderDataStatus() {
+    const market = DATA.meta.publicMarket;
+    const status = market.refreshedAt ? `Market snapshot · ${market.asOf}` : market.label;
+    $('data-status').textContent = status;
+    document.querySelectorAll('.public-as-of').forEach(el => el.textContent = status);
+}
+
+function renderAll() {
+    renderDataStatus();
+    $('grid-mag10').innerHTML   = DATA.mag10.map(a=>card(a,'mag10')).join('');
+    $('grid-bonds').innerHTML   = DATA.bonds.map(a=>card(a,'bonds')).join('');
+    $('grid-em').innerHTML      = DATA.em.map(a=>card(a,'em')).join('');
+    $('grid-indexes').innerHTML = DATA.indexes.map(a=>card(a,'indexes')).join('');
+    $('dash-mag10').innerHTML   = DATA.mag10.map(a=>miniCard(a,'mag10')).join('');
+    $('dash-indexes').innerHTML = DATA.indexes.map(a=>miniCard(a,'indexes')).join('');
+    $('llm-table').innerHTML = DATA.llm.map(c=>`<tr class="border-b border-brand-border last:border-0">
+        <td class="p-3 font-bold">${c.name}</td><td class="p-3 text-right font-mono">$${c.valB}B</td>
+        <td class="p-3 text-gray-700">${c.round}</td><td class="p-3 text-gray-700">${c.leads}</td>
+        <td class="p-3 text-gray-500 font-mono text-xs">${c.asOf}</td>
+        <td class="p-3"><a class="text-brand-gold text-xs font-bold hover:underline" href="${c.source}" target="_blank" rel="noopener">${c.sourceLabel} ↗</a></td></tr>`).join('');
+    ['mag10','bonds','em','indexes','llm'].forEach(k => $('news-'+k).innerHTML = newsBlock(k));
+
+    const tape = [...DATA.mag10, ...DATA.indexes.slice(0,3), ...DATA.bonds.filter(b=>b.isYield)];
+    const tapeHtml = tape.map(a => `<div class="flex items-center space-x-2"><span class="font-bold text-white">${a.sym}</span>
+        <span class="${a.chg>=0?'text-emerald-400':'text-rose-400'}">${a.isYield ? a.yield.toFixed(2)+'% ('+(a.chg>=0?'+':'')+a.chg.toFixed(2)+')' : fmtChg(a.chg)+'%'}</span></div>`).join('');
+    $('ticker').innerHTML = tapeHtml + tapeHtml; // duplicate for seamless loop
+    renderCharts();
+}
+
+/* ========================================================================= CHARTS */
+const charts = {};
+function bar(id, labels, data, label, colorFn) {
+    if (charts[id]) charts[id].destroy();
+    charts[id] = new Chart($(id), { type:'bar',
+        data:{ labels, datasets:[{ label, data, backgroundColor: data.map(colorFn || (()=> '#b89728')), borderRadius:6 }] },
+        options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+            scales:{ x:{grid:{display:false}, ticks:{color:'#71717a'}}, y:{grid:{color:'#f1f1f5'}, ticks:{color:'#71717a'}} } } });
+}
+const pm = v => v>=0 ? '#059669' : '#e11d48';
+function renderCharts() {
+    bar('dashboardChart', ['Q1','Q2','Q3','Q4'], [88.5,104.2,118.0,124.5], 'NVDA ($)');
+    bar('mag10Chart', DATA.mag10.map(a=>a.sym), DATA.mag10.map(a=>a.chg), 'Day %', pm);
+    bar('emChart',    DATA.em.map(a=>a.sym),    DATA.em.map(a=>a.chg),    'Day %', pm);
+    bar('llmChart',   DATA.llm.map(c=>c.name),  DATA.llm.map(c=>c.valB),  '$B');
+    const yl = DATA.bonds.filter(b=>b.isYield);
+    if (charts.curveChart) charts.curveChart.destroy();
+    charts.curveChart = new Chart($('curveChart'), { type:'line',
+        data:{ labels: yl.map(b=>b.sym.replace('US','').replace('Y','Y')), datasets:[{ label:'Yield %', data: yl.map(b=>b.yield), borderColor:'#b89728', backgroundColor:'rgba(184,151,40,.1)', fill:true, tension:.3 }] },
+        options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{grid:{color:'#f1f1f5'}}, x:{grid:{display:false}} } } });
+}
+
+/* ========================================================================= ROUTER */
+let lastPage = 'dashboard';
+function showPage(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.nav === name));
+    ($('page-'+name) || $('page-dashboard')).classList.add('active');
+    if (name !== 'detail') lastPage = name;
+    window.scrollTo({top:0});
+}
+function route() {
+    const h = location.hash.replace('#','') || 'dashboard';
+    if (h.startsWith('asset/')) { const [,g,s] = h.split('/'); openDetail(g,s); return; }
+    showPage(h);
+}
+window.addEventListener('hashchange', route);
+document.addEventListener('click', e => {
+    const b = e.target.closest('[data-detail]');
+    if (b) { const [g,s] = b.dataset.detail.split(':'); location.hash = `asset/${g}/${s}`; }
+});
+$('detail-back').addEventListener('click', () => location.hash = lastPage);
+
+function openDetail(group, sym) {
+    const a = (DATA[group]||[]).find(x=>x.sym===sym); if (!a) return showPage('dashboard');
+    $('detail-symbol').innerText = a.sym; $('detail-name').innerText = a.name; $('detail-bio').innerText = a.bio;
+    $('detail-price').innerText = fmtPrice(a);
+    $('detail-change').innerText = (a.isYield ? (a.chg>=0?'+':'')+a.chg.toFixed(2)+' pp' : fmtChg(a.chg)+'%') + ' latest recorded change';
+    $('detail-change').className = 'text-xs font-semibold ' + chgClass(a.chg);
+    showPage('detail');
+    const base = a.isYield ? a.yield : a.price;
+    if (charts.detailChart) charts.detailChart.destroy();
+    charts.detailChart = new Chart($('detailChart'), { type:'line',
+        data:{ labels:['Mon','Tue','Wed','Thu','Fri'], datasets:[{ data:[base*.96, base*.98, base*.97, base*.99, base], borderColor:'#b89728', backgroundColor:'rgba(184,151,40,.1)', fill:true, tension:.3 }] },
+        options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ x:{grid:{color:'#f1f1f5'}}, y:{grid:{color:'#f1f1f5'}} } } });
+}
+
+window.addEventListener('DOMContentLoaded', () => { renderAll(); route(); });
+</script>
+</body>
+</html>
