@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>60FPS — Macro & Asset Intelligence</title>
+    
+    <!-- OpenGraph / iMessage Preview Meta Tags -->
+    <meta property="og:title" content="60FPS — Macro & Asset Intelligence">
+    <meta property="og:description" content="High-performance financial intelligence, macro analysis, and asset tracking.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop">
+    <meta property="og:type" content="website">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            gold: '#b89728',
+                            dark: '#111113',
+                            card: '#ffffff',
+                            border: '#e4e4e7',
+                            bg: '#f8f8fc'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Chart.js for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @keyframes marquee {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            display: flex;
+            width: 200%;
+            animation: marquee 25s linear infinite;
+        }
+        .animate-marquee:hover {
+            animation-play-state: paused;
+        }
+    </style>
+</head>
+<body class="bg-brand-bg text-gray-900 font-sans antialiased selection:bg-brand-gold selection:text-white min-h-screen flex flex-col justify-between">
+
+    <div>
+        <!-- Scrolling Stock Ticker -->
+        <div class="bg-brand-dark text-gray-300 border-b border-gray-800 overflow-hidden whitespace-nowrap py-2 text-xs">
+            <div class="animate-marquee flex space-x-8">
+                <div class="flex items-center space-x-2"><span class="font-bold text-white">NVDA</span> <span class="text-emerald-400">+$14.20 (+3.4%)</span></div>
+                <div class="flex items-center space-x-2"><span class="font-bold text-white">AAPL</span> <span class="text-rose-400">-$2.10 (-1.1%)</span></div>
+                <div class="flex items-center space-x-2"><span class="font-bold text-white">MSFT</span> <span class="text-emerald-400">+$6.80 (+1.5%)</span></div>
+                <div class="flex items-center space-x-2"><span class="font-bold text-white">TSLA</span> <span class="text-emerald-400">+$18.50 (+7.2%)</span></div>
+                <div class="flex items-center space-x-2"><span class="font-bold text-white">BTC</span> <span class="text-emerald-400">+$2,400 (+3.8%)</span></div>
+                <!-- Duplicate for seamless loop -->
+                <div class="flex items-center space-x-2"><span class="font-bold text-white">NVDA</span> <span class="text-emerald-400">+$14.20 (+3.4%)</span></div>
+                <div class="flex items-center space-x-2"><span class="font-bold text-white">AAPL</span> <span class="text-rose-400">-$2.10 (-1.1%)</span></div>
+                <div class="flex items-center space-x-2"><span class="font-bold text-white">MSFT</span> <span class="text-emerald-400">+$6.80 (+1.5%)</span></div>
+                <div class="flex items-center space-x-2"><span class="font-bold text-white">TSLA</span> <span class="text-emerald-400">+$18.50 (+7.2%)</span></div>
+                <div class="flex items-center space-x-2"><span class="font-bold text-white">BTC</span> <span class="text-emerald-400">+$2,400 (+3.8%)</span></div>
+            </div>
+        </div>
+
+        <!-- Header / Navigation Bar -->
+        <header class="border-b border-brand-border bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-xs">
+            <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+                
+                <!-- Sleek Futuristic Logo & Title -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('dashboard')">
+                    <div class="relative w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-dark via-gray-900 to-brand-gold p-[1px] flex items-center justify-center shadow-md">
+                        <div class="w-full h-full bg-white rounded-xl flex items-center justify-center overflow-hidden relative">
+                            <span class="font-black text-brand-dark text-sm tracking-tighter relative z-10">60F</span>
+                            <div class="absolute bottom-0 right-0 w-2 h-2 bg-brand-gold rounded-full animate-pulse"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-black tracking-tight text-gray-900 leading-tight flex items-center space-x-1">
+                            <span class="text-brand-gold">60</span><span class="text-gray-900">FPS</span>
+                        </h1>
+                        <p class="text-[10px] tracking-widest text-gray-500 uppercase font-semibold">Macro & Asset Intelligence</p>
+                    </div>
+                </div>
+
+                <!-- Ergonomic Nav Tabs (Dashboard & Our Purpose at Top) -->
+                <nav class="flex items-center bg-gray-100 p-1 rounded-xl border border-brand-border">
+                    <button id="nav-dashboard" onclick="switchTab('dashboard')" class="px-4 py-2 text-xs font-bold rounded-lg transition-all bg-brand-dark text-white shadow-xs">
+                        Dashboard
+                    </button>
+                    <button id="nav-purpose" onclick="switchTab('purpose')" class="px-4 py-2 text-xs font-bold rounded-lg transition-all text-gray-600 hover:text-gray-900">
+                        Our Purpose
+                    </button>
+                </nav>
+
+                <!-- Configuration Button -->
+                <div>
+                    <button class="flex items-center space-x-2 px-3.5 py-2 rounded-xl border border-brand-gold/60 text-brand-gold text-xs font-bold hover:bg-brand-gold/10 transition-colors">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        <span>Configure</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="max-w-7xl mx-auto px-4 py-6 w-full">
+
+            <!-- TAB 1: DASHBOARD -->
+            <section id="tab-dashboard" class="space-y-6">
+                <!-- Top Row: Interactive Stock Quick-Cards with Bios -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div onclick="openStockBio('NVDA', 'NVIDIA Corporation', 'NVIDIA designs graphics processing units (GPUs) for the gaming and professional markets, as well as system on a chip units (SoCs) for the mobile computing and automotive market. Currently leading the global AI hardware infrastructure wave.', '+3.4%', '124.50')" class="bg-white border border-brand-border p-4 rounded-xl shadow-xs cursor-pointer hover:border-brand-gold transition group">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs font-mono text-gray-500">NVDA</span>
+                            <span class="text-xs text-emerald-600 font-semibold">+3.4%</span>
+                        </div>
+                        <h4 class="text-sm font-bold text-gray-900 mt-1 group-hover:text-brand-gold transition">NVIDIA Corp.</h4>
+                        <p class="text-[11px] text-gray-500 mt-2 line-clamp-1">AI Hardware & Data Center Infrastructure...</p>
+                    </div>
+                    <div onclick="openStockBio('AAPL', 'Apple Inc.', 'Apple designs, manufactures, and markets smartphones, personal computers, tablets, wearables, and accessories, and sells a variety of related services. Heavy emphasis on consumer hardware ecosystem stability.', '-1.1%', '214.20')" class="bg-white border border-brand-border p-4 rounded-xl shadow-xs cursor-pointer hover:border-brand-gold transition group">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs font-mono text-gray-500">AAPL</span>
+                            <span class="text-xs text-rose-600 font-semibold">-1.1%</span>
+                        </div>
+                        <h4 class="text-sm font-bold text-gray-900 mt-1 group-hover:text-brand-gold transition">Apple Inc.</h4>
+                        <p class="text-[11px] text-gray-500 mt-2 line-clamp-1">Consumer Electronics & Ecosystem Services...</p>
+                    </div>
+                    <div onclick="openStockBio('MSFT', 'Microsoft Corporation', 'Microsoft produces computer software, consumer electronics, personal computers, and related services. Best known for its enterprise software suites and Azure cloud computing platform.', '+1.5%', '445.10')" class="bg-white border border-brand-border p-4 rounded-xl shadow-xs cursor-pointer hover:border-brand-gold transition group">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs font-mono text-gray-500">MSFT</span>
+                            <span class="text-xs text-emerald-600 font-semibold">+1.5%</span>
+                        </div>
+                        <h4 class="text-sm font-bold text-gray-900 mt-1 group-hover:text-brand-gold transition">Microsoft Corp.</h4>
+                        <p class="text-[11px] text-gray-500 mt-2 line-clamp-1">Cloud Computing & Enterprise Software...</p>
+                    </div>
+                    <div onclick="openStockBio('TSLA', 'Tesla, Inc.', 'Tesla designs and manufactures electric vehicles, stationary battery energy storage devices from home to grid-scale, solar panels and solar roof tiles, and related products and services.', '+7.2%', '248.90')" class="bg-white border border-brand-border p-4 rounded-xl shadow-xs cursor-pointer hover:border-brand-gold transition group">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs font-mono text-gray-500">TSLA</span>
+                            <span class="text-xs text-emerald-600 font-semibold">+7.2%</span>
+                        </div>
+                        <h4 class="text-sm font-bold text-gray-900 mt-1 group-hover:text-brand-gold transition">Tesla, Inc.</h4>
+                        <p class="text-[11px] text-gray-500 mt-2 line-clamp-1">EVs, Autonomous Systems & Clean Energy...</p>
+                    </div>
+                </div>
+
+                <!-- Dashboard Unique Graph (NVIDIA Quarterly Performance Tracker) -->
+                <div class="bg-white border border-brand-border p-5 rounded-2xl shadow-xs">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="text-sm font-bold text-gray-900">NVDA: Quarterly Stock Valuation Tracker</h3>
+                            <p class="text-xs text-gray-500">Trailing Four Quarters Performance (Q1 – Q4)</p>
+                        </div>
+                        <span class="text-xs bg-amber-50 text-brand-gold border border-brand-gold/30 px-2.5 py-1 rounded-md font-mono font-semibold">Live Asset Tracking</span>
+                    </div>
+                    <div class="h-64 relative">
+                        <canvas id="dashboardChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: OUR PURPOSE (Pure Narrative & Economic Ethos) -->
+            <section id="tab-purpose" class="space-y-6 hidden">
+                <div class="bg-white border border-brand-border p-8 rounded-2xl shadow-xs space-y-6">
+                    <div>
+                        <span class="text-xs font-mono text-brand-gold uppercase tracking-widest font-bold">Economic Ethos</span>
+                        <h2 class="text-2xl font-black text-gray-900 mt-1">Our Purpose & Macro Thesis</h2>
+                    </div>
+                    
+                    <div class="space-y-4 text-sm text-gray-700 leading-relaxed border-t border-brand-border pt-6">
+                        <p>
+                            We live in an era where traditional market signals are frequently distorted by structural liquidity shifts, policy interventions, and noise. At <strong class="text-gray-900">60FPS</strong>, our purpose is to strip away tactical clutter and deliver high-frequency, high-fidelity macro and asset intelligence.
+                        </p>
+                        <p>
+                            Just as a high refresh rate provides fluid visual clarity in fast-moving environments, our framework cuts through economic latency. We focus on structural capital allocation, infrastructure build-outs, and fundamental asset drivers—empowering high-conviction decision makers to see the economic landscape exactly as it moves.
+                        </p>
+                    </div>
+
+                    <!-- Embedded Prof G Markets Video Link -->
+                    <div class="pt-6 border-t border-brand-border">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-brand-gold mb-3">Featured Market Breakdown (Prof G Markets)</h4>
+                        <div class="aspect-video w-full rounded-xl overflow-hidden bg-gray-900 border border-brand-border relative flex items-center justify-center">
+                            <iframe class="w-full h-full" src="https://www.youtube-nocookie.com/embed/videoseries?list=PLw-VjHDlEOgs6232V-N8vP2-Z96qY9K5z" title="Prof G Markets" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: EXTENDED COMPANY BIO / STOCK PAGE (Hidden by default) -->
+            <section id="tab-stock-detail" class="space-y-6 hidden">
+                <button onclick="switchTab('dashboard')" class="inline-flex items-center space-x-2 text-xs font-bold text-brand-gold hover:underline">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    <span>Back to Dashboard</span>
+                </button>
+                <div class="bg-white border border-brand-border p-6 rounded-2xl shadow-xs space-y-4">
+                    <div class="flex flex-wrap justify-between items-start gap-4">
+                        <div>
+                            <span id="detail-symbol" class="text-xs font-mono text-brand-gold uppercase tracking-widest font-bold">NVDA</span>
+                            <h2 id="detail-name" class="text-2xl font-black text-gray-900">NVIDIA Corporation</h2>
+                        </div>
+                        <div class="text-right">
+                            <span id="detail-price" class="text-xl font-bold text-gray-900">$124.50</span>
+                            <p id="detail-change" class="text-xs text-emerald-600 font-semibold">+3.4% Today</p>
+                        </div>
+                    </div>
+                    <div class="border-t border-brand-border pt-4">
+                        <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Extended Bio & Market Thesis</h4>
+                        <p id="detail-bio" class="text-sm text-gray-700 leading-relaxed">Loading company profile...</p>
+                    </div>
+                    <div class="pt-4">
+                        <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Recent Stock Performance (Past 5 Sessions)</h4>
+                        <div class="h-48 relative">
+                            <canvas id="detailChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-brand-border py-4 text-center text-xs text-gray-500 bg-white">
+        &copy; 2026 60FPS Intelligence. All rights reserved.
+    </footer>
+
+    <!-- JavaScript Controllers -->
+    <script>
+        // Tab Switching Logic
+        function switchTab(tabName) {
+            document.getElementById('tab-dashboard').classList.add('hidden');
+            document.getElementById('tab-purpose').classList.add('hidden');
+            document.getElementById('tab-stock-detail').classList.add('hidden');
+            
+            document.getElementById('nav-dashboard').className = "px-4 py-2 text-xs font-bold rounded-lg transition-all text-gray-600 hover:text-gray-900";
+            document.getElementById('nav-purpose').className = "px-4 py-2 text-xs font-bold rounded-lg transition-all text-gray-600 hover:text-gray-900";
+
+            if(tabName === 'dashboard') {
+                document.getElementById('tab-dashboard').classList.remove('hidden');
+                document.getElementById('nav-dashboard').className = "px-4 py-2 text-xs font-bold rounded-lg transition-all bg-brand-dark text-white shadow-xs";
+            } else if(tabName === 'purpose') {
+                document.getElementById('tab-purpose').classList.remove('hidden');
+                document.getElementById('nav-purpose').className = "px-4 py-2 text-xs font-bold rounded-lg transition-all bg-brand-dark text-white shadow-xs";
+            } else if(tabName === 'stock-detail') {
+                document.getElementById('tab-stock-detail').classList.remove('hidden');
+            }
+        }
+
+        // Open Stock Bio View
+        let detailChartInstance = null;
+        function openStockBio(symbol, name, bio, change, price) {
+            document.getElementById('detail-symbol').innerText = symbol;
+            document.getElementById('detail-name').innerText = name;
+            document.getElementById('detail-bio').innerText = bio;
+            document.getElementById('detail-price').innerText = '$' + price;
+            document.getElementById('detail-change').innerText = change + ' Today';
+            
+            switchTab('stock-detail');
+
+            // Render Stock Detail Graph
+            const ctx = document.getElementById('detailChart').getContext('2d');
+            if(detailChartInstance) detailChartInstance.destroy();
+            detailChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+                    datasets: [{
+                        label: symbol + ' Price ($)',
+                        data: [parseFloat(price)*0.95, parseFloat(price)*0.97, parseFloat(price)*0.96, parseFloat(price)*0.99, parseFloat(price)],
+                        borderColor: '#b89728',
+                        backgroundColor: 'rgba(184, 151, 40, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: '#f1f1f5' }, ticks: { color: '#71717a' } },
+                        y: { grid: { color: '#f1f1f5' }, ticks: { color: '#71717a' } }
+                    }
+                }
+            });
+        }
+
+        // Initialize Dashboard Chart (NVDA Quarterly Performance Tracker)
+        window.addEventListener('DOMContentLoaded', () => {
+            const dashCtx = document.getElementById('dashboardChart').getContext('2d');
+            new Chart(dashCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+                    datasets: [{
+                        label: 'NVDA Quarterly Valuation ($)',
+                        data: [88.5, 104.2, 118.0, 124.5],
+                        backgroundColor: '#b89728',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { color: '#71717a' } },
+                        y: { grid: { color: '#f1f1f5' }, ticks: { color: '#71717a' } }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
