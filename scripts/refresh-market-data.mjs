@@ -10,7 +10,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dir = path.dirname(fileURLToPath(import.meta.url));
-const dataPath = path.join(__dir, '../data.js');
+const dataPath = path.join(__dir, '../data/data.js');
 const apiKey = process.env.FINNHUB_API_KEY;
 
 if (!apiKey) {
@@ -136,7 +136,7 @@ window.DATA = ${json};
 `;
   
   fs.writeFileSync(dataPath, content, 'utf-8');
-  console.log(`\n✅ Updated data.js`);
+  console.log(`\n✅ Updated data/data.js`);
 }
 
 /**
